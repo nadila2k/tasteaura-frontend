@@ -1,0 +1,11 @@
+const OrderStatus = Object.freeze({
+  PENDING: "PENDING",
+  CONFIRMED: "CONFIRMED",
+  PREPARING: "PREPARING",
+  OUT_FOR_DELIVERY: "OUT_FOR_DELIVERY",
+  DELIVERED: "DELIVERED",
+  COMPLETED: "COMPLETED",
+  CANCELLED: "CANCELLED"
+});
+
+export default OrderStatus;
