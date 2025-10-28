@@ -4,9 +4,10 @@ import { clearToken, getToken } from "./features/auth/token";
 import { hideSpinner, showSpinner } from "./components/GlobalSpinner";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/api/v1/",
+  baseURL: "https://tasteaura-backend-t7xi.onrender.com/api/v1/",
   timeout: 10000,
 });
+
 
 // ✅ Request Interceptor
 api.interceptors.request.use((config) => {
