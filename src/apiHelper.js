@@ -4,7 +4,7 @@ import { clearToken, getToken } from "./features/auth/token";
 import { hideSpinner, showSpinner } from "./components/GlobalSpinner";
 
 const api = axios.create({
-  baseURL: "https://tasteaura-backend-t7xi.onrender.com/api/v1/",
+  baseURL: "https://tasteaura-backend-0vfl.onrender.com",
   timeout: 10000,
 });
 
