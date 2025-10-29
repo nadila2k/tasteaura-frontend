@@ -5,7 +5,7 @@ import { hideSpinner, showSpinner } from "./components/GlobalSpinner";
 
 const api = axios.create({
   baseURL: "https://tasteaura-backend-jzax.onrender.com/api/v1/",
-  timeout: 10000,
+  timeout: 100000,
 });
 
 
