@@ -9,11 +9,13 @@ import OrderStatus from "../enum/orderStatus";
 export default function AdminOrderView() {
   const { orderId } = useParams();
   const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   
   useEffect(() => {
     const fetchOrder = async () => {
       try {
+          setLoading(true);
         const data = await apiHelper.get(
           `orders/${orderId}`,
           {},
@@ -23,12 +25,22 @@ export default function AdminOrderView() {
       } catch (error) {
         console.error("Failed to fetch order:", error);
         toast.error("Failed to fetch order");
+      }finally{
+        setLoading(false);
       }
     };
 
     if (orderId) fetchOrder();
   }, [orderId]);
 
+   if (loading) {
+   
+    return (
+      <div className="flex flex-col justify-center items-center h-[70vh]">
+        <Spinner size={12} color="border-white" text="Loading order..." textColor="text-gray-400" />
+      </div>
+    );
+  }
   if (!order) {
     return <p className="text-center mt-10 text-gray-500">Loading order...</p>;
   }

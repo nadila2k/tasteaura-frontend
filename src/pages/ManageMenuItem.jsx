@@ -5,6 +5,7 @@ import FormModalInput from "../components/FormModalInput";
 import { useForm } from "react-hook-form";
 import apiHelper from "../apiHelper";
 import toast from "react-hot-toast";
+import Spinner from "../components/Spinner";
 
 export default function ManageMenuItem() {
   const {
@@ -19,20 +20,22 @@ export default function ManageMenuItem() {
   const [menuItems, setMenuItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
-
+  const [loading, setLoading] = useState(true);
 
   const fetchMenuItems = async () => {
     try {
+      setLoading(true);
       const data = await apiHelper.get(
         "menu-items",
         {},
         { auth: true, notify: false }
       );
       setMenuItems(data);
-    
     } catch (error) {
       console.error("Failed to fetch menu items:", error);
       toast.error("Failed to fetch menu items");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -127,7 +130,6 @@ export default function ManageMenuItem() {
   return (
     <div className="flex flex-col justify-center items-center w-full p-6">
       <p className="mb-5 font-bold text-3xl">Manage Menu Items</p>
-      
 
       <div className="">
         <button
@@ -142,12 +144,23 @@ export default function ManageMenuItem() {
         </button>
       </div>
 
-      <DashboardTable
-        columns={columns}
-        data={menuItems}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <Spinner
+            size="h-[60px] w-[60px]"
+            color="border-gray-800" // Dark gray spinner border
+            text="Loading menu items..."
+            textColor="text-gray-700" // Dark gray text
+          />
+        </div>
+      ) : (
+        <DashboardTable
+          columns={columns}
+          data={menuItems}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      )}
 
       <FormModal
         isOpen={isModalOpen}

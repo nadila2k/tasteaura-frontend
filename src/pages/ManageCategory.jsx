@@ -5,6 +5,7 @@ import FormModal from "../components/FormModal";
 import FormModalInput from "../components/FormModalInput";
 import apiHelper from "../apiHelper";
 import toast from "react-hot-toast";
+import Spinner from "../components/Spinner";
 
 export default function ManageCategory() {
   const {
@@ -17,9 +18,11 @@ export default function ManageCategory() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const [editingCategory, setEditingCategory] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchCategories = async () => {
     try {
+      setLoading(true);
       const data = await apiHelper.get(
         "categories",
         {},
@@ -28,6 +31,8 @@ export default function ManageCategory() {
       setCategories(data);
     } catch (error) {
       console.error("Failed to fetch categories:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,12 +114,23 @@ export default function ManageCategory() {
         </button>
       </div>
 
-      <DashboardTable
-        columns={columns}
-        data={categories}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <Spinner
+            size="h-[60px] w-[60px]"
+            color="border-gray-800" // Dark gray spinner border
+            text="Loading categories..."
+            textColor="text-gray-700" // Dark gray text
+          />
+        </div>
+      ) : (
+        <DashboardTable
+          columns={columns}
+          data={categories}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      )}
 
       <FormModal
         isOpen={isModalOpen}

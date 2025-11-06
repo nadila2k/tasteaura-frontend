@@ -4,16 +4,18 @@ import apiHelper from "../apiHelper";
 import toast from "react-hot-toast";
 import OrderStatus from "../enum/orderStatus";
 import { useNavigate } from "react-router-dom";
+import Spinner from "../components/Spinner";
 
 export default function OrderInfo() {
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [selectedTab, setSelectedTab] = useState("ONGOING");
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(true);
 
   const fetchOrders = async () => {
     try {
+      setLoading(true);
       const data = await apiHelper.get(
         "orders/my",
         {},
@@ -24,6 +26,8 @@ export default function OrderInfo() {
     } catch (error) {
       console.error("Failed to fetch orders:", error);
       toast.error("Failed to fetch orders");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,7 +70,7 @@ export default function OrderInfo() {
   ];
 
   const handleView = (order) => {
-     navigate(`/customer-dashboard/order-view/${order.id}`);
+    navigate(`/customer-dashboard/order-view/${order.id}`);
   };
 
   return (
@@ -106,11 +110,22 @@ export default function OrderInfo() {
         </button>
       </div>
 
-      <DashboardTable
-        columns={columns}
-        data={filteredOrders}
-        onView={handleView}
-      />
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <Spinner
+            size="h-[60px] w-[60px]"
+            color="border-gray-800" // Dark gray spinner border
+            text="Loading order..."
+            textColor="text-gray-700" // Dark gray text
+          />
+        </div>
+      ) : (
+        <DashboardTable
+          columns={columns}
+          data={filteredOrders}
+          onView={handleView}
+        />
+      )}
     </div>
   );
 }

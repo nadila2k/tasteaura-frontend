@@ -5,6 +5,7 @@ import { FaBox, FaDollarSign, FaShoppingCart, FaUser } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import apiHelper from "../apiHelper";
 import RevenueChart from "../components/RevenueChart";
+import Spinner from "../components/Spinner";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState([]);
@@ -14,6 +15,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        setLoading(true);
         const data = await apiHelper.get(
           "dashboard/cards/admin",
           {},
@@ -84,7 +86,16 @@ export default function AdminDashboard() {
   }, []);
 
   if (loading) {
-    return <div className="p-6 text-center">Loading dashboard...</div>;
+    return (
+      <div className="flex items-center justify-center py-40 bg-gray-100">
+        <Spinner
+          size="h-[60px] w-[60px]"
+          color="border-gray-800" // Dark gray spinner border
+          text="Loading menu items..."
+          textColor="text-gray-700" // Dark gray text
+        />
+      </div>
+    );
   }
 
   return (

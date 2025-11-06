@@ -5,28 +5,31 @@ import toast from "react-hot-toast";
 import OrderType from "../enum/OrderType";
 import OrderStatus from "../enum/orderStatus";
 import OrderTable from "../components/OrderTable";
+import Spinner from "../components/Spinner";
 
 export default function ManageOrder() {
   const [orders, setOrders] = useState([]);
   const [selectedType, setSelectedType] = useState(OrderType.DELIVERY);
   const [selectedStatusTab, setSelectedStatusTab] = useState("ONGOING");
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
 
   const fetchOrders = async () => {
     try {
+      setLoading(true);
       const response = await apiHelper.get(
         "orders",
         {},
         { auth: true, notify: false }
       );
 
-      
       const data = response?.data || response;
       setOrders(data);
     } catch (error) {
       console.error("Failed to fetch orders:", error);
       toast.error("Failed to load orders");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,7 +57,6 @@ export default function ManageOrder() {
     return true;
   });
 
-
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       await apiHelper.put(
@@ -74,7 +76,6 @@ export default function ManageOrder() {
     <div className="flex flex-col items-center w-full p-6">
       <h1 className="text-2xl font-semibold mb-5">Manage Orders</h1>
 
-   
       <div className="flex space-x-4 mb-4">
         {["ONGOING", "COMPLETED", "CANCELLED"].map((tab) => (
           <button
@@ -95,7 +96,6 @@ export default function ManageOrder() {
         ))}
       </div>
 
-    
       <div className="flex space-x-4 mb-6">
         {[OrderType.DELIVERY, OrderType.TAKEAWAY].map((type) => (
           <button
@@ -112,12 +112,22 @@ export default function ManageOrder() {
         ))}
       </div>
 
-   
-      <OrderTable
-        orders={filteredOrders}
-        selectedType={selectedType}
-        onStatusChange={handleStatusChange}
-      />
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <Spinner
+            size="h-[60px] w-[60px]"
+            color="border-gray-800" // Dark gray spinner border
+            text="Loading orders..."
+            textColor="text-gray-700" // Dark gray text
+          />
+        </div>
+      ) : (
+        <OrderTable
+          orders={filteredOrders}
+          selectedType={selectedType}
+          onStatusChange={handleStatusChange}
+        />
+      )}
     </div>
   );
 }

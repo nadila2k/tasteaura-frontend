@@ -5,14 +5,17 @@ import toast from "react-hot-toast";
 
 import DashboardTable from "../components/DashboardTable";
 import OrderStatus from "../enum/orderStatus";
+import Spinner from "../components/Spinner";
 
 export default function OrderView() {
   const { orderId } = useParams();
   const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchOrder = async () => {
       try {
+        setLoading(true);
         const data = await apiHelper.get(
           `orders/${orderId}`,
           {},
@@ -22,6 +25,8 @@ export default function OrderView() {
       } catch (error) {
         console.error("Failed to fetch order:", error);
         toast.error("Failed to fetch order");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -82,13 +87,25 @@ export default function OrderView() {
         </div>
       </div>
       <h2 className="text-xl font-semibold mb-3">Order Items</h2>
-      <DashboardTable
-        columns={itemColumns}
-        data={order.orderItems}
-        onView={null}
-        onEdit={null}
-        onDelete={null}
-      />
+
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <Spinner
+            size="h-[60px] w-[60px]"
+            color="border-gray-800" // Dark gray spinner border
+            text="Loading order..."
+            textColor="text-gray-700" // Dark gray text
+          />
+        </div>
+      ) : (
+        <DashboardTable
+          columns={itemColumns}
+          data={order.orderItems}
+          onView={null}
+          onEdit={null}
+          onDelete={null}
+        />
+      )}
     </div>
   );
 }

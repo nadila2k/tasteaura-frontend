@@ -3,14 +3,20 @@ import { useNavigate } from "react-router-dom";
 import MenuHighlightsList from "./MenuHighlightsList";
 
 import apiHelper from "../apiHelper";
+import Spinner from "./Spinner";
+
+
+
 
 export default function MenuHighlights() {
   const navigate = useNavigate();
 
   const [menuItems, setMenuItems] = useState([]);
+   const [isLoading, setIsLoading] = useState(true);
 
   const fetchMenuItems = async () => {
     try {
+       setIsLoading(true);
       const data = await apiHelper.get(
         "menu-items",
         {},
@@ -20,6 +26,8 @@ export default function MenuHighlights() {
     } catch (error) {
       console.error("Failed to fetch menu items:", error);
       toast.error("Failed to fetch menu items");
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -37,10 +45,20 @@ export default function MenuHighlights() {
       </h2>
 
       <div className="flex flex-col items-center gap-2 w-full">
-        {menuItems.slice(0, 7).map((item) => (
-          <MenuHighlightsList key={item.id} item={item} />
-        ))}
+        {isLoading ? (
+           <Spinner
+        size="h-[60px] w-[60px]"   
+        color="border-white"       
+        text="Loading..."
+        textColor="text-white"    
+      />
+        ) : (
+          menuItems.slice(0, 7).map((item) => (
+            <MenuHighlightsList key={item.id} item={item} />
+          ))
+        )}
       </div>
+
 
       <button
         onClick={() => navigate("/menu")}

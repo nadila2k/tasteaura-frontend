@@ -9,9 +9,13 @@ const api = axios.create({
 });
 
 
-// ✅ Request Interceptor
+
 api.interceptors.request.use((config) => {
-  showSpinner();
+  
+   if (['post', 'put', 'delete'].includes(config.method.toLowerCase())) {
+    showSpinner();
+  }
+
   const authFlag = config.custom?.auth ?? true; 
   if (authFlag) {
     const token = getToken();
@@ -25,7 +29,9 @@ api.interceptors.request.use((config) => {
 // ✅ Response Interceptor
 api.interceptors.response.use(
   (response) => {
-     hideSpinner();
+     if (['post', 'put', 'delete'].includes(response.config.method.toLowerCase())) {
+      hideSpinner();
+    }
     const res = response.data;
     const notify = response.config.custom?.notify ?? true;
 
@@ -57,7 +63,9 @@ api.interceptors.response.use(
     return res;
   },
   (error) => {
-    hideSpinner();
+     if (error.config && ['post', 'put', 'delete'].includes(error.config.method.toLowerCase())) {
+      hideSpinner();
+    }
     const notify = error.config?.custom?.notify ?? true;
     if (notify) {
       handleError(error);
