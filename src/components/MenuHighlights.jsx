@@ -20,7 +20,7 @@ export default function MenuHighlights() {
       const data = await apiHelper.get(
         "menu-items",
         {},
-        { auth: true, notify: false }
+        { auth: false, notify: false }
       );
       setMenuItems(data);
     } catch (error) {
